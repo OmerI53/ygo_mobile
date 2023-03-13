@@ -15,12 +15,9 @@ class _DuelPageState extends State<DuelPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("duel"),
-        ),
-        body: Container(
+    return Scaffold(
+      body: Stack(children: [
+        Container(
           alignment: Alignment.center,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -98,7 +95,39 @@ class _DuelPageState extends State<DuelPage> {
             ],
           ),
         ),
-      ),
+        Positioned(
+            top: 20.0,
+            left: 20.0,
+            child: SizedBox(
+                height: 50,
+                width: 50,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        Colors.red,
+                        Colors.blue,
+                      ],
+                    ),
+                  ),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(13),
+                          shape: const CircleBorder(
+                            side: BorderSide(color: Colors.black, width: 2),
+                          ),
+                          backgroundColor: Colors.transparent),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        SystemChrome.setPreferredOrientations(
+                            [DeviceOrientation.portraitUp]);
+                      },
+                      child: const Icon(Icons.arrow_back_ios_new)),
+                )))
+      ]),
     );
   }
 }

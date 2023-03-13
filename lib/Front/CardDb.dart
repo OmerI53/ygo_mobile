@@ -11,14 +11,21 @@ class _CardDbState extends State<CardDb> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          TextField(
-            decoration: const InputDecoration(
-                hintText: 'Search', suffixIcon: Icon(Icons.search)),
-            onChanged: ((value) {}),
+      body: Container(
+        color: Colors.pinkAccent,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(10),
+        child: SafeArea(
+          child: Column(
+            children: [
+              TextField(
+                decoration: const InputDecoration(
+                    hintText: 'Search', suffixIcon: Icon(Icons.search)),
+                onChanged: ((value) {}),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -13,24 +13,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-            alignment: Alignment.center,
-            color: Colors.purple,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              ElevatedButton(
-                  onPressed: () {
-                    SystemChrome.setPreferredOrientations(
-                        [DeviceOrientation.landscapeRight]);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: ((context) => const DuelPage())));
-                  },
-                  child: const Text("duel")),
-              ElevatedButton(onPressed: () {}, child: const Text("cardSearch"))
-            ])),
-      ),
+    return Scaffold(
+      body: Container(
+          alignment: Alignment.center,
+          color: Colors.purple,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ElevatedButton(
+                onPressed: () {
+                  SystemChrome.setPreferredOrientations(
+                      [DeviceOrientation.landscapeRight]);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => const DuelPage())));
+                },
+                child: const Text("Duel")),
+          ])),
     );
   }
 }

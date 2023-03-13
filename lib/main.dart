@@ -29,26 +29,25 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  int currentPage = 1;
-  List<Widget> pages = const [DuelPage(), HomePage(), CardDb()];
+  int selectedIndex = 0;
+  List<Widget> pages = const [HomePage(), CardDb()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const HomePage(),
-      /*
-      bottomNavigationBar: NavigationBar(
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.gamepad), label: 'Duel'),
-          NavigationDestination(icon: Icon(Icons.home), label: 'Homepage'),
-          NavigationDestination(icon: Icon(Icons.search), label: 'Cards')
+      body: pages[selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.search), label: "Card Search"),
         ],
-        onDestinationSelected: (int index) {
+        currentIndex: selectedIndex,
+        onTap: (int newIndex) {
           setState(() {
-            currentPage = index;
+            selectedIndex = newIndex;
           });
         },
       ),
-      */
     );
     ;
   }
