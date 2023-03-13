@@ -17,9 +17,21 @@ class _DuelPageState extends State<DuelPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text("duel"),
+        ),
         body: Container(
           alignment: Alignment.center,
-          color: Colors.blueGrey,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Colors.blue,
+                Colors.red,
+              ],
+            ),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,17 +43,27 @@ class _DuelPageState extends State<DuelPage> {
                       const SizedBox(
                         height: 100,
                       ),
-                      const Text("player 1"),
+                      const Text(
+                        "player 1",
+                        style: TextStyle(fontSize: 30),
+                      ),
                       Text(
                         player1Hp,
-                        style: const TextStyle(fontSize: 30),
+                        style: const TextStyle(fontSize: 50),
                       ),
-                      ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: ((context) => Edithp(player1Hp))));
-                          },
-                          child: const Text("edit"))
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          player1Hp = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => Edithp(player1Hp))));
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.edit_outlined),
+                      )
                     ],
                   ),
                 ],
@@ -54,29 +76,25 @@ class _DuelPageState extends State<DuelPage> {
                   const SizedBox(
                     height: 100,
                   ),
-                  const Text("player 2"),
+                  const Text("player 2", style: TextStyle(fontSize: 30)),
                   Text(
                     player2Hp,
-                    style: const TextStyle(fontSize: 30),
+                    style: const TextStyle(fontSize: 50),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: ((context) => Edithp(player2Hp))));
+                  IconButton(
+                      onPressed: () async {
+                        player2Hp = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) => Edithp(player2Hp))));
+                        setState(() {});
                       },
-                      child: const Text("edit")),
+                      icon: const Icon(Icons.edit)),
                 ],
               ),
               const SizedBox(
                 width: 50,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    SystemChrome.setPreferredOrientations(
-                        [DeviceOrientation.portraitUp]);
-                    Navigator.of(context).pop(context);
-                  },
-                  child: Text("return")),
             ],
           ),
         ),
