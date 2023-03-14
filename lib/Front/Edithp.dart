@@ -11,9 +11,9 @@ class Edithp extends StatefulWidget {
 }
 
 class _EdithpState extends State<Edithp> {
-  List numList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*2", "0", "/2"];
-  List symbolList = ["C", "+", "-", "=", "Del"];
-  String newNum = "";
+  List numList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "2*", "0", "/2"];
+  List symbolList = ["C", "+", "-", "=", "Del", "GG"];
+  String newNum = "    ";
   dynamic proc = "";
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,16 @@ class _EdithpState extends State<Edithp> {
           children: [
             Container(
                 alignment: Alignment.center,
-                color: Colors.amberAccent,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Colors.blueAccent,
+                      Colors.redAccent,
+                    ],
+                  ),
+                ),
                 child: Column(children: [
                   const SizedBox(
                     height: 50,
@@ -32,31 +41,50 @@ class _EdithpState extends State<Edithp> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        color: Colors.white,
-                        height: 65,
+                      SizedBox(
+                        height: 50,
                         width: 150,
                         child: Text(
                           widget.currentHp,
-                          style: const TextStyle(fontSize: 40),
+                          style: const TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       Container(
-                        color: Colors.orangeAccent,
-                        height: 65,
-                        width: 150,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 2),
+                          shape: BoxShape.circle,
+                          backgroundBlendMode: BlendMode.colorDodge,
+                          gradient: const LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Colors.red,
+                              Colors.blue,
+                            ],
+                          ),
+                        ),
+                        height: 50,
+                        width: 50,
                         child: Text(
                           proc,
                           style: const TextStyle(fontSize: 40),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      Container(
-                        color: Colors.green,
-                        height: 65,
+                      SizedBox(
+                        height: 50,
                         width: 150,
                         child: Text(
                           newNum,
-                          style: const TextStyle(fontSize: 40),
+                          style: const TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],
@@ -68,28 +96,36 @@ class _EdithpState extends State<Edithp> {
                       Container(
                           alignment: Alignment.center,
                           padding: const EdgeInsets.all(10),
-                          color: Colors.pink,
                           width: 300,
-                          height: 250,
+                          height: 290,
                           child: GridView.builder(
                             gridDelegate:
                                 const SliverGridDelegateWithMaxCrossAxisExtent(
-                                    childAspectRatio: 2,
+                                    childAspectRatio: 1.37,
                                     maxCrossAxisExtent: 100),
                             itemCount: 12,
                             itemBuilder: ((context, index) {
                               return Container(
+                                padding: const EdgeInsets.all(3),
                                 height: 50,
                                 width: 50,
-                                color: Colors.white,
                                 child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            numList[index].length == 1
+                                                ? Colors.blueGrey
+                                                : Colors.redAccent,
+                                        shape:
+                                            const CircleBorder(eccentricity: 0),
+                                        side: const BorderSide(
+                                            color: Colors.black, width: 2)),
                                     onPressed: () {
                                       setState(() {
                                         if (numList[index].length == 1) {
                                           newNum += numList[index];
                                         } else {
                                           switch (numList[index]) {
-                                            case "*2":
+                                            case "2*":
                                               proc = "*";
                                               newNum = "2";
                                               break;
@@ -106,55 +142,74 @@ class _EdithpState extends State<Edithp> {
                             }),
                           )),
                       Container(
-                        width: 100,
+                        width: 200,
                         height: 250,
-                        color: Colors.green,
-                        child: ListView.builder(
-                            itemBuilder: ((context, index) {
-                              return Container(
-                                height: 50,
-                                width: 50,
-                                color: Colors.white,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      switch (symbolList[index]) {
-                                        case "C":
-                                          setState(() {
-                                            newNum = "";
-                                          });
-                                          break;
-                                        case "+":
-                                          setState(() {
-                                            proc = "+";
-                                          });
-                                          break;
-                                        case "-":
-                                          setState(() {
-                                            proc = "-";
-                                          });
-                                          break;
-                                        case "=":
-                                          setState(() {
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(1),
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  childAspectRatio: 1.25,
+                                  maxCrossAxisExtent: 120),
+                          itemCount: symbolList.length,
+                          itemBuilder: ((context, index) {
+                            return Container(
+                              padding: const EdgeInsets.all(3),
+                              height: 60,
+                              width: 60,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                      shape:
+                                          const CircleBorder(eccentricity: 0),
+                                      side: const BorderSide(
+                                          color: Colors.black, width: 2)),
+                                  onPressed: () {
+                                    switch (symbolList[index]) {
+                                      case "C":
+                                        setState(() {
+                                          newNum = "";
+                                        });
+                                        break;
+                                      case "+":
+                                        setState(() {
+                                          proc = "+";
+                                        });
+                                        break;
+                                      case "-":
+                                        setState(() {
+                                          proc = "-";
+                                        });
+                                        break;
+                                      case "=":
+                                        setState(() {
+                                          if (newNum.isNotEmpty) {
                                             widget.currentHp = resolveEqq(
                                                 widget.currentHp, newNum, proc);
                                             newNum = "";
                                             proc = "";
-                                          });
-                                          break;
-                                        case "Del":
-                                          setState(() {
-                                            if (newNum.isNotEmpty) {
-                                              newNum = newNum.substring(
-                                                  0, newNum.length - 1);
-                                            }
-                                          });
-                                          break;
-                                      }
-                                    },
-                                    child: Text(symbolList[index])),
-                              );
-                            }),
-                            itemCount: 5),
+                                          }
+                                        });
+                                        break;
+                                      case "Del":
+                                        setState(() {
+                                          if (newNum.isNotEmpty) {
+                                            newNum = newNum.substring(
+                                                0, newNum.length - 1);
+                                          }
+                                        });
+                                        break;
+                                      case "GG":
+                                        setState(() {
+                                          widget.currentHp = "0";
+                                        });
+                                        break;
+                                    }
+                                  },
+                                  child: Text(symbolList[index])),
+                            );
+                          }),
+                        ),
                       ),
                     ],
                   )

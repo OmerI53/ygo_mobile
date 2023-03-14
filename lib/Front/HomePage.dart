@@ -15,17 +15,39 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Colors.red,
+                Colors.blue,
+              ],
+            ),
+          ),
           alignment: Alignment.center,
-          color: Colors.purple,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueGrey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    side: const BorderSide(color: Colors.black, width: 2)),
                 onPressed: () {
                   SystemChrome.setPreferredOrientations(
                       [DeviceOrientation.landscapeRight]);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => const DuelPage())));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => const DuelPage()),
+                        fullscreenDialog: true),
+                  );
                 },
-                child: const Text("Duel")),
+                child: const Text(
+                  "Duel",
+                  style: TextStyle(fontSize: 30),
+                )),
           ])),
     );
   }

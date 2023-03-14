@@ -37,10 +37,14 @@ class _RootPageState extends State<RootPage> {
       body: pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
           BottomNavigationBarItem(
               icon: Icon(Icons.search), label: "Card Search"),
         ],
+        selectedItemColor: Colors.blueGrey,
         currentIndex: selectedIndex,
         onTap: (int newIndex) {
           setState(() {

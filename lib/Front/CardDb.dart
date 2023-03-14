@@ -12,7 +12,16 @@ class _CardDbState extends State<CardDb> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.pinkAccent,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Colors.yellow,
+              Colors.purpleAccent,
+            ],
+          ),
+        ),
         alignment: Alignment.center,
         padding: const EdgeInsets.all(10),
         child: SafeArea(

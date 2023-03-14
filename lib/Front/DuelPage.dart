@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:quiver/async.dart';
 import 'package:ygo_mobile/Front/Edithp.dart';
 
 class DuelPage extends StatefulWidget {
@@ -12,6 +15,19 @@ class DuelPage extends StatefulWidget {
 class _DuelPageState extends State<DuelPage> {
   String player1Hp = "8000";
   String player2Hp = "8000";
+  int seconds = 60;
+  Timer? myTimer;
+  void _startTimer() {
+    myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        seconds--;
+      });
+    });
+  }
+
+  void _stopTimer() {
+    myTimer?.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +47,6 @@ class _DuelPageState extends State<DuelPage> {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -51,22 +66,91 @@ class _DuelPageState extends State<DuelPage> {
                       const SizedBox(
                         height: 5,
                       ),
-                      IconButton(
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(13),
+                            shape: const CircleBorder(
+                              side: BorderSide(color: Colors.black, width: 2),
+                            ),
+                            backgroundColor: Colors.transparent),
                         onPressed: () async {
                           player1Hp = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: ((context) => Edithp(player1Hp))));
+                                  builder: ((context) => Edithp(player1Hp)),
+                                  fullscreenDialog: true));
                           setState(() {});
                         },
-                        icon: const Icon(Icons.edit_outlined),
+                        child: const Icon(Icons.edit_outlined),
                       )
                     ],
                   ),
                 ],
               ),
               const SizedBox(
-                width: 200,
+                width: 120,
+              ),
+              Column(
+                children: [
+                  const Padding(padding: EdgeInsets.all(15)),
+                  Column(
+                    children: [
+                      Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 2),
+                            backgroundBlendMode: BlendMode.colorDodge,
+                            gradient: const LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Colors.red,
+                                Colors.blue,
+                              ],
+                            ),
+                          ),
+                          width: 75,
+                          height: 30,
+                          child: Text("$seconds")),
+                      Row(
+                        children: [
+                          Container(
+                            color: Colors.pink,
+                            child: ElevatedButton(
+                                onPressed: (() {
+                                  _startTimer();
+                                }),
+                                child: const Icon(Icons.play_arrow)),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            color: Colors.pink,
+                            child: ElevatedButton(
+                                onPressed: (() {
+                                  _startTimer();
+                                }),
+                                child: const Icon(Icons.stop)),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 250,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          player1Hp = "8000";
+                          player2Hp = "8000";
+                        });
+                      },
+                      child: const Text("Reset"))
+                ],
+              ),
+              const SizedBox(
+                width: 120,
               ),
               Column(
                 children: [
@@ -78,15 +162,22 @@ class _DuelPageState extends State<DuelPage> {
                     player2Hp,
                     style: const TextStyle(fontSize: 50),
                   ),
-                  IconButton(
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(13),
+                          shape: const CircleBorder(
+                            side: BorderSide(color: Colors.black, width: 2),
+                          ),
+                          backgroundColor: Colors.transparent),
                       onPressed: () async {
                         player2Hp = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: ((context) => Edithp(player2Hp))));
+                                builder: ((context) => Edithp(player2Hp)),
+                                fullscreenDialog: true));
                         setState(() {});
                       },
-                      icon: const Icon(Icons.edit)),
+                      child: const Icon(Icons.edit)),
                 ],
               ),
               const SizedBox(
