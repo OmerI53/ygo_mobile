@@ -27,6 +27,13 @@ class _HomePageState extends State<HomePage> {
           ),
           alignment: Alignment.center,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Image.asset(
+              "Images/logo.png",
+              height: 160,
+            ),
+            const SizedBox(
+              height: 200,
+            ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueGrey,

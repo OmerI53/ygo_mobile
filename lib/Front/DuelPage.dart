@@ -15,18 +15,35 @@ class DuelPage extends StatefulWidget {
 class _DuelPageState extends State<DuelPage> {
   String player1Hp = "8000";
   String player2Hp = "8000";
-  int seconds = 60;
+  int time = const Duration(minutes: 40).inSeconds;
   Timer? myTimer;
-  void _startTimer() {
-    myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        seconds--;
+  bool timerActive = false;
+
+  _startTimer() {
+    if (!timerActive) {
+      myTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() {
+          time--;
+        });
       });
-    });
+      timerActive = true;
+    }
   }
 
-  void _stopTimer() {
-    myTimer?.cancel();
+  _stopTimer() {
+    if (timerActive) {
+      myTimer?.cancel();
+      timerActive = false;
+    }
+  }
+
+  _resetState() {
+    setState(() {
+      player1Hp = "8000";
+      player2Hp = "8000";
+      _stopTimer();
+      time = const Duration(minutes: 40).inSeconds;
+    });
   }
 
   @override
@@ -50,18 +67,22 @@ class _DuelPageState extends State<DuelPage> {
             children: [
               Row(
                 children: [
+                  const SizedBox(
+                    width: 60,
+                  ),
+                  //Player 1 Column
                   Column(
                     children: [
                       const SizedBox(
                         height: 100,
                       ),
                       const Text(
-                        "player 1",
+                        "Player 1",
                         style: TextStyle(fontSize: 30),
                       ),
                       Text(
                         player1Hp,
-                        style: const TextStyle(fontSize: 50),
+                        style: const TextStyle(fontSize: 60),
                       ),
                       const SizedBox(
                         height: 5,
@@ -88,8 +109,9 @@ class _DuelPageState extends State<DuelPage> {
                 ],
               ),
               const SizedBox(
-                width: 120,
+                width: 100,
               ),
+              //Timer Column
               Column(
                 children: [
                   const Padding(padding: EdgeInsets.all(15)),
@@ -97,70 +119,79 @@ class _DuelPageState extends State<DuelPage> {
                     children: [
                       Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 2),
-                            backgroundBlendMode: BlendMode.colorDodge,
-                            gradient: const LinearGradient(
-                              begin: Alignment.topRight,
-                              end: Alignment.bottomLeft,
-                              colors: [
-                                Colors.red,
-                                Colors.blue,
-                              ],
-                            ),
-                          ),
-                          width: 75,
-                          height: 30,
-                          child: Text("$seconds")),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 2,
+                              ),
+                              color: Colors.transparent),
+                          width: 150,
+                          height: 50,
+                          child: Text(
+                            "${Duration(seconds: time).inMinutes}:${Duration(seconds: time.remainder(60).remainder(60)).inSeconds}",
+                            style: const TextStyle(
+                                fontSize: 40, fontWeight: FontWeight.normal),
+                            textAlign: TextAlign.center,
+                          )),
                       Row(
                         children: [
-                          Container(
-                            color: Colors.pink,
-                            child: ElevatedButton(
-                                onPressed: (() {
-                                  _startTimer();
-                                }),
-                                child: const Icon(Icons.play_arrow)),
-                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  shape: const CircleBorder()),
+                              onPressed: (() {
+                                _startTimer();
+                              }),
+                              child: const Icon(
+                                Icons.play_arrow,
+                              )),
                           const SizedBox(
-                            width: 10,
+                            width: 2,
                           ),
-                          Container(
-                            color: Colors.pink,
-                            child: ElevatedButton(
-                                onPressed: (() {
-                                  _startTimer();
-                                }),
-                                child: const Icon(Icons.stop)),
-                          )
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blueGrey,
+                                  shape: const CircleBorder()),
+                              onPressed: (() {
+                                setState(() {
+                                  _stopTimer();
+                                });
+                              }),
+                              child: const Icon(Icons.stop))
                         ],
                       )
                     ],
                   ),
                   const SizedBox(
-                    height: 250,
+                    height: 160,
                   ),
                   ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          side: const BorderSide(color: Colors.black, width: 2),
+                          backgroundColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100))),
                       onPressed: () {
-                        setState(() {
-                          player1Hp = "8000";
-                          player2Hp = "8000";
-                        });
+                        _resetState();
                       },
-                      child: const Text("Reset"))
+                      child:
+                          const Text("Reset", style: TextStyle(fontSize: 23)))
                 ],
               ),
               const SizedBox(
-                width: 120,
+                width: 100,
               ),
+              //Player 2 Column
               Column(
                 children: [
                   const SizedBox(
                     height: 100,
                   ),
-                  const Text("player 2", style: TextStyle(fontSize: 30)),
+                  const Text("Player 2", style: TextStyle(fontSize: 30)),
                   Text(
                     player2Hp,
-                    style: const TextStyle(fontSize: 50),
+                    style: const TextStyle(fontSize: 60),
                   ),
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -212,9 +243,12 @@ class _DuelPageState extends State<DuelPage> {
                           ),
                           backgroundColor: Colors.transparent),
                       onPressed: () {
-                        Navigator.pop(context);
-                        SystemChrome.setPreferredOrientations(
-                            [DeviceOrientation.portraitUp]);
+                        setState(() {
+                          _resetState();
+                          Navigator.pop(context);
+                          SystemChrome.setPreferredOrientations(
+                              [DeviceOrientation.portraitUp]);
+                        });
                       },
                       child: const Icon(Icons.arrow_back_ios_new)),
                 )))
