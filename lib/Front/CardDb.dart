@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:ygo_mobile/Back/Funcs.dart';
-import 'package:http/http.dart' as http;
 
 class CardDb extends StatefulWidget {
   const CardDb({super.key});
@@ -14,10 +10,11 @@ class CardDb extends StatefulWidget {
 
 class _CardDbState extends State<CardDb> {
   TextEditingController searchController = TextEditingController();
-  Map matchList = {};
+  List matchList = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -35,33 +32,50 @@ class _CardDbState extends State<CardDb> {
           child: Column(
             children: [
               TextField(
-                decoration: const InputDecoration(
-                    hintText: 'Search', suffixIcon: Icon(Icons.search)),
+                decoration: InputDecoration(
+                    hintText: 'Search',
+                    suffixIcon: IconButton(
+                        onPressed: (() async {
+                          String jsonString =
+                              await DefaultAssetBundle.of(context)
+                                  .loadString("lib/Back/CardList.json");
+                          matchList =
+                              await getCards(jsonString, searchController.text);
+                          setState(() {});
+                        }),
+                        icon: const Icon(
+                          Icons.search,
+                        ))),
                 controller: searchController,
                 onChanged: ((value) async {
-                  setState(() {});
+                  setState(() {
+                    if (searchController.text.isEmpty) {
+                      matchList.clear();
+                    }
+                  });
                 }),
               ),
-              ElevatedButton(
-                  onPressed: (() async {
-                    String jsonString = await DefaultAssetBundle.of(context)
-                        .loadString("lib/Back/nameDesc.json");
-
-                    matchList = await getCards(jsonString, "Mathmech");
-                    print(matchList.keys);
-                    setState(() {});
-                  }),
-                  child: const Icon(Icons.search)),
-              Container(
-                color: Colors.white,
+              const SizedBox(
+                height: 50,
+              ),
+              SizedBox(
                 width: 300,
-                height: 500,
-                child: ListView.builder(
-                    itemCount: matchList.length,
-                    itemBuilder: ((context, index) {
-                      return CardTile(matchList.keys.elementAt(index),
-                          matchList.values.elementAt(index));
-                    })),
+                height: 575,
+                child: ListView.separated(
+                  itemCount: matchList.length,
+                  itemBuilder: ((context, index) {
+                    return GestureDetector(
+                        onTap: () {
+                          showCard(context, matchList[index]);
+                        },
+                        child: CardTile(matchList[index]));
+                  }),
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 10,
+                    );
+                  },
+                ),
               )
             ],
           ),
@@ -71,32 +85,118 @@ class _CardDbState extends State<CardDb> {
   }
 }
 
-class CardTile extends StatefulWidget {
-  CardTile(this.name, this.effect, {super.key});
-  String name;
-  String effect;
+class CardTile extends StatelessWidget {
+  const CardTile(this.card, {super.key});
+  final YGOCard card;
 
-  @override
-  State<CardTile> createState() => _CardTileState();
-}
-
-class _CardTileState extends State<CardTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.pink,
-      width: 300,
-      height: 400,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: Color(card.borderColor)),
+      height: 63,
       child: Column(children: [
+        const Padding(padding: EdgeInsets.all(8)),
         Text(
-          widget.name,
-          style: TextStyle(fontSize: 10),
+          card.name,
+          style: TextStyle(
+              fontSize: 19,
+              overflow: TextOverflow.ellipsis,
+              color:
+                  card.borderColor == 0xFF000000 ? Colors.white : Colors.black),
+          textAlign: TextAlign.center,
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        Text(widget.effect, style: TextStyle(fontSize: 10))
+        Text(card.type, style: const TextStyle(fontSize: 13))
       ]),
     );
   }
+}
+
+showCard(BuildContext context, YGOCard card) {
+  showDialog(
+      useSafeArea: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.purpleAccent,
+                  Colors.yellow,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            width: 340,
+            height: 550,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(padding: EdgeInsets.all(10)),
+                  //Card name
+                  Container(
+                      padding: const EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      height: 72,
+                      width: 290,
+                      child: Text(
+                        card.name,
+                        style: const TextStyle(fontSize: 18),
+                        textAlign: TextAlign.center,
+                      )),
+                  const SizedBox(
+                    height: 140,
+                  ),
+                  SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: 280,
+                      height: 60,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                      ),
+                      //Card info field
+                      child: Text(
+                        card.getInfoFields(),
+                        style: const TextStyle(
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  //Effect Bar
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    height: 220,
+                    width: 320,
+                    child: SingleChildScrollView(
+                      child: Text(card.eff,
+                          style: const TextStyle(fontSize: 15),
+                          textAlign: TextAlign.center),
+                    ),
+                  )
+                ]),
+          ),
+        );
+      });
 }

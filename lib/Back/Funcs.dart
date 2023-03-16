@@ -7,6 +7,7 @@ class YGOCard {
   String name = '';
   String type = '';
   String eff = '';
+  int borderColor = 0;
 
   YGOCard(this.name, this.type, this.eff);
 
@@ -15,10 +16,14 @@ class YGOCard {
         'type': type,
         'eff': eff,
       };
+  getInfoFields() {
+    return 'Type:$type';
+  }
 }
 
 class SpellCard extends YGOCard {
   String race = '';
+  int borderColor = 0xFF4CAF50;
   SpellCard(super.name, super.type, super.eff, this.race);
 
   SpellCard.fromJson(Map<String, dynamic> json)
@@ -28,10 +33,18 @@ class SpellCard extends YGOCard {
   @override
   Map<String, dynamic> toJson() =>
       {'name': name, 'type': type, 'eff': eff, 'race': race};
+
+  @override
+  getInfoFields() {
+    // TODO: implement getInfoFields
+    return super.getInfoFields() + ' race:' + race;
+  }
 }
 
 class TrapCard extends YGOCard {
   String race = '';
+  @override
+  int borderColor = 0xFFEC407A;
   TrapCard(super.name, super.type, super.eff, this.race);
 
   TrapCard.fromJson(Map<String, dynamic> json)
@@ -41,6 +54,11 @@ class TrapCard extends YGOCard {
   @override
   Map<String, dynamic> toJson() =>
       {'name': name, 'type': type, 'eff': eff, 'race': race};
+  @override
+  getInfoFields() {
+    // TODO: implement getInfoFields
+    return super.getInfoFields() + ' race:' + race;
+  }
 }
 
 class MonsterCard extends YGOCard {
@@ -50,9 +68,13 @@ class MonsterCard extends YGOCard {
   String race = '';
   int atk;
   int def;
+  @override
+  int borderColor = 0xFFFF6E40;
 
   MonsterCard(super.name, super.type, super.eff, this.monsterType, this.race,
-      this.attr, this.lvlRankLink, this.atk, this.def);
+      this.attr, this.lvlRankLink, this.atk, this.def) {
+    setBorderColor();
+  }
 
   MonsterCard.fromJson(Map<String, dynamic> json)
       : monsterType = json['monsterType'],
@@ -61,7 +83,9 @@ class MonsterCard extends YGOCard {
         atk = json['atk'],
         def = json['def'],
         attr = json['attr'],
-        super(json['name'], json['type'], json['eff']);
+        super(json['name'], json['type'], json['eff']) {
+    setBorderColor();
+  }
   @override
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -75,8 +99,38 @@ class MonsterCard extends YGOCard {
         'attr': attr
       };
 
-  getCardInfo() {
-    return '$name,$type,$eff,';
+  setBorderColor() {
+    switch (type) {
+      case 'Fusion Monster':
+        borderColor = 0xFFAB47BC;
+        break;
+      case 'Synchro Monster':
+        borderColor = 0xFFFAFAFA;
+        break;
+      case 'XYZ Monster':
+        borderColor = 0xFF000000;
+        break;
+      case 'Link Monster':
+        borderColor = 0xFF03A9F4;
+        break;
+      case 'Normal Monster':
+        borderColor = 0xFFFFF179;
+        break;
+    }
+  }
+
+  @override
+  getInfoFields() {
+    return super.getInfoFields() +
+        ' Monster Type:' +
+        monsterType +
+        ' Lvl/Rank/Rating:' +
+        '$lvlRankLink' +
+        ' attr:' +
+        attr +
+        ' race:' +
+        race +
+        ' atk: $atk, def: $def';
   }
 }
 
@@ -128,17 +182,31 @@ getCardDatabase() async {
 }
 
 //get all the cards that contain the search key from local  json
-Future<Map> getCards(String jsonString, String searchKey) async {
-  Map matchMap = {};
-  Map<String, dynamic> nameDesc = json.decode(jsonString);
-  for (var key in nameDesc.keys) {
-    if (key.contains(searchKey)) {
-      matchMap[key] = nameDesc[key];
+Future<List<YGOCard>> getCards(String jsonString, String searchKey) async {
+  List<YGOCard> matchList = [];
+  Map<String, YGOCard> matchMap = {};
+  Map<String, dynamic> jsonDecoded = json.decode(jsonString);
+
+  for (var key in jsonDecoded.keys) {
+    if (key.toLowerCase().contains(searchKey.toLowerCase())) {
+      String cardType = jsonDecoded[key]['type'];
+      if (cardType.contains('Monster')) {
+        matchMap[key] = MonsterCard.fromJson(jsonDecoded[key]);
+      }
+      if (cardType.contains('Spell')) {
+        matchMap[key] = SpellCard.fromJson(jsonDecoded[key]);
+        if (cardType.contains('Trap')) {
+          matchMap[key] = TrapCard.fromJson(jsonDecoded[key]);
+        }
+      }
     }
   }
-  return matchMap;
+  matchList = matchMap.values.toList();
+  return matchList;
 }
 
 void main(List<String> args) {
-  //getCardDatabase();
+  File file = File('lib/Back/Cardlist.json');
+  final filecontent = file.readAsStringSync();
+  //getCards(filecontent, "Mathmech");
 }
