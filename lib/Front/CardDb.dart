@@ -29,55 +29,58 @@ class _CardDbState extends State<CardDb> {
         alignment: Alignment.center,
         padding: const EdgeInsets.all(10),
         child: SafeArea(
-          child: Column(
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                    hintText: 'Search',
-                    suffixIcon: IconButton(
-                        onPressed: (() async {
-                          String jsonString =
-                              await DefaultAssetBundle.of(context)
-                                  .loadString("lib/Back/CardList.json");
-                          matchList =
-                              await getCards(jsonString, searchController.text);
-                          setState(() {});
-                        }),
-                        icon: const Icon(
-                          Icons.search,
-                        ))),
-                controller: searchController,
-                onChanged: ((value) async {
-                  setState(() {
-                    if (searchController.text.isEmpty) {
-                      matchList.clear();
-                    }
-                  });
-                }),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              SizedBox(
-                width: 300,
-                height: 575,
-                child: ListView.separated(
-                  itemCount: matchList.length,
-                  itemBuilder: ((context, index) {
-                    return GestureDetector(
-                        onTap: () {
-                          showCard(context, matchList[index]);
-                        },
-                        child: CardTile(matchList[index]));
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                      hintText: 'Search',
+                      suffixIcon: IconButton(
+                          onPressed: (() async {
+                            String jsonString =
+                                await DefaultAssetBundle.of(context)
+                                    .loadString("lib/Back/CardList.json");
+                            matchList = await getCards(
+                                jsonString, searchController.text);
+                            setState(() {});
+                          }),
+                          icon: const Icon(
+                            Icons.search,
+                          ))),
+                  controller: searchController,
+                  onChanged: ((value) async {
+                    setState(() {
+                      if (searchController.text.isEmpty) {
+                        matchList.clear();
+                      }
+                    });
                   }),
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(
-                      height: 10,
-                    );
-                  },
                 ),
-              )
-            ],
+                const SizedBox(
+                  height: 50,
+                ),
+                SizedBox(
+                  width: 300,
+                  height: 550,
+                  child: ListView.separated(
+                    itemCount: matchList.length,
+                    itemBuilder: ((context, index) {
+                      return GestureDetector(
+                          onTap: () {
+                            showCard(context, matchList[index]);
+                          },
+                          child: CardTile(matchList[index]));
+                    }),
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        height: 10,
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -108,7 +111,13 @@ class CardTile extends StatelessWidget {
                   card.borderColor == 0xFF000000 ? Colors.white : Colors.black),
           textAlign: TextAlign.center,
         ),
-        Text(card.type, style: const TextStyle(fontSize: 13))
+        Text(
+          card.type,
+          style: TextStyle(
+              fontSize: 13,
+              color:
+                  card.borderColor == 0xFF000000 ? Colors.white : Colors.black),
+        )
       ]),
     );
   }
@@ -158,7 +167,7 @@ showCard(BuildContext context, YGOCard card) {
                   ),
                   SingleChildScrollView(
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       width: 280,
                       height: 60,
                       alignment: Alignment.center,
